@@ -33,19 +33,33 @@ $mensaje = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
     $codigo = $_POST['codigo'];
     
-    // Eliminar el producto de la base de datos
-    $query = "DELETE FROM productos WHERE codigo = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $codigo);
+    // Verificar si el producto tiene ventas asociadas
+    $queryVerificacion = "SELECT COUNT(*) AS total FROM ventas WHERE id_producto = (SELECT id FROM productos WHERE codigo = ?)";
+    $stmtVerificacion = $conn->prepare($queryVerificacion);
+    $stmtVerificacion->bind_param("s", $codigo);
+    $stmtVerificacion->execute();
+    $resultadoVerificacion = $stmtVerificacion->get_result();
+    $filaVerificacion = $resultadoVerificacion->fetch_assoc();
     
-    if ($stmt->execute()) {
-        $mensaje = "Producto eliminado correctamente.";
+    if ($filaVerificacion['total'] > 0) {
+        $mensaje = "No se puede eliminar el producto porque tiene ventas asociadas.";
     } else {
-        $mensaje = "Error al eliminar el producto: " . $stmt->error;
+        // Eliminar el producto de la base de datos
+        $query = "DELETE FROM productos WHERE codigo = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $codigo);
+        
+        if ($stmt->execute()) {
+            $mensaje = "Producto eliminado correctamente.";
+        } else {
+            $mensaje = "Error al eliminar el producto: " . $stmt->error;
+        }
+        
+        $stmt->close();
     }
 
-    if (isset($stmt)) {
-        $stmt->close();
+    if (isset($stmtVerificacion)) {
+        $stmtVerificacion->close();
     }
 }
 ?>
@@ -90,28 +104,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
         .product-list {
             display: flex;
             flex-wrap: wrap;
+            justify-content: center;
+            /* Centra las tarjetas en la lista */
             gap: 20px;
             margin-top: 20px;
         }
+
         .product-card {
             flex: 1 1 calc(33.333% - 20px);
+            /* Mantiene tres tarjetas por fila */
+            max-width: 300px;
+            /* Establece un ancho máximo para las tarjetas */
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
             overflow: hidden;
             min-height: 300px;
+            /* Tamaño uniforme */
             text-align: center;
             padding: 10px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .product-image {
             width: 100%;
             height: 200px;
+            /* Mantener una altura uniforme */
             object-fit: cover;
+            /* Asegurarse de que la imagen cubra el área sin distorsión */
             border-bottom: 1px solid #ddd;
+            border-radius: 8px;
+            /* Bordes redondeados para las imágenes */
         }
-        .product-name, .product-code, .product-price {
+
+        .product-name,
+        .product-code,
+        .product-price {
             font-weight: bold;
+        }
+
+        .product-preview img {
+            max-width: 100px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        /* Animación de las tarjetas */
+        .product-card:hover {
+            transform: translateY(-10px);
+            /* Elevar la tarjeta */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            /* Sombra más intensa */
         }
         .form-container {
             background-color: white;

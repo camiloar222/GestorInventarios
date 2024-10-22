@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
         // Si no se sube una nueva imagen
         $query = "UPDATE productos SET nombre=?, precio=? WHERE codigo=?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("sd", $nombre, $precio, $codigo);
+        $stmt->bind_param("sds", $nombre, $precio, $codigo);
     }
 
     if (isset($stmt) && $stmt->execute()) {
@@ -128,17 +128,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
         .product-list {
             display: flex;
             flex-wrap: wrap;
+            justify-content: center;
+            /* Centra las tarjetas en la lista */
             gap: 20px;
             margin-top: 20px;
         }
 
         .product-card {
             flex: 1 1 calc(33.333% - 20px);
+            /* Mantiene tres tarjetas por fila */
+            max-width: 300px;
+            /* Establece un ancho máximo para las tarjetas */
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
             overflow: hidden;
             min-height: 300px;
+            /* Tamaño uniforme */
             text-align: center;
             padding: 10px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -147,14 +153,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
         .product-image {
             width: 100%;
             height: 200px;
+            /* Mantener una altura uniforme */
             object-fit: cover;
+            /* Asegurarse de que la imagen cubra el área sin distorsión */
             border-bottom: 1px solid #ddd;
+            border-radius: 8px;
+            /* Bordes redondeados para las imágenes */
         }
 
         .product-name,
         .product-code,
         .product-price {
             font-weight: bold;
+        }
+
+        .product-preview img {
+            max-width: 100px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        /* Animación de las tarjetas */
+        .product-card:hover {
+            transform: translateY(-10px);
+            /* Elevar la tarjeta */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            /* Sombra más intensa */
         }
 
         .form-container {
@@ -187,6 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
             border-radius: 8px;
             font-size: 1.1rem;
         }
+
         .btn-danger:hover {
             background-color: #0041a3;
         }

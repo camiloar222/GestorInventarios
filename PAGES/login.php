@@ -114,7 +114,7 @@
             <?php
             ob_start(); // Iniciar el buffer de salida
             session_start();
-            include('../INCLUDES/conexion.php'); //aqui tomamos los datos de la base de datos que conectamos uwu
+            include('../INCLUDES/conexion.php'); //aqui tomamos los datos de la base de datos que conectamos 
 
           //se verifica la conexion que sea correcta
             if (!$conn) {

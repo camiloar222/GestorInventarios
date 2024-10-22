@@ -37,14 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Función para cargar productos de la base de datos
-function cargarProductos($conn) {
+function cargarProductos($conn)
+{
     $productos = [];
     $result = $conn->query("SELECT codigo, nombre, precio, imagen FROM productos");
-    
+
     while ($row = $result->fetch_assoc()) {
         $productos[] = $row;
     }
-    
+
     return $productos;
 }
 
@@ -61,7 +62,8 @@ $productos = cargarProductos($conn);
     <title>Inventario - Agregar Productos</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -100,31 +102,57 @@ $productos = cargarProductos($conn);
         .product-list {
             display: flex;
             flex-wrap: wrap;
+            justify-content: center;
+            /* Centra las tarjetas en la lista */
             gap: 20px;
             margin-top: 20px;
         }
 
         .product-card {
-            flex: 1 1 calc(33.333% - 20px); /* Tres tarjetas por fila */
+            flex: 1 1 calc(33.333% - 20px);
+            /* Mantiene tres tarjetas por fila */
+            max-width: 300px;
+            /* Establece un ancho máximo para las tarjetas */
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
             overflow: hidden;
-            min-height: 300px; /* Tamaño uniforme */
+            min-height: 300px;
+            /* Tamaño uniforme */
             text-align: center;
             padding: 10px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Añadido */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .product-image {
             width: 100%;
             height: 200px;
-            object-fit: cover; /* Ajuste de imagen */
+            /* Mantener una altura uniforme */
+            object-fit: cover;
+            /* Asegurarse de que la imagen cubra el área sin distorsión */
             border-bottom: 1px solid #ddd;
+            border-radius: 8px;
+            /* Bordes redondeados para las imágenes */
         }
 
-        .product-name, .product-code, .product-price {
-            font-weight: bold;
+        .product-name,
+        .product-code,
+        .product-price {
+            font-weight: normal;
+        }
+
+        .product-preview img {
+            max-width: 100px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        /* Animación de las tarjetas */
+        .product-card:hover {
+            transform: translateY(-10px);
+            /* Elevar la tarjeta */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            /* Sombra más intensa */
         }
 
         .form-container {
@@ -168,8 +196,10 @@ $productos = cargarProductos($conn);
 
         /* Animación de las tarjetas */
         .product-card:hover {
-            transform: translateY(-10px); /* Elevar la tarjeta */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más intensa */
+            transform: translateY(-10px);
+            /* Elevar la tarjeta */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            /* Sombra más intensa */
         }
     </style>
 </head>
@@ -181,28 +211,34 @@ $productos = cargarProductos($conn);
             <img src="http://localhost/SuperMarket/IMAGES/logo.png" alt="Logo">
             SuperMarket
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link "  href="menu.php"><i class="bi bi-house-door"></i> <strong>Menu</strong></a>
+                    <a class="nav-link " href="menu.php"><i class="bi bi-house-door"></i> <strong>Menu</strong></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="agregar_producto.php"><i class="bi bi-plus-circle"></i> <strong>Agregar Productos</strong></a>
+                    <a class="nav-link active" aria-current="page" href="agregar_producto.php"><i
+                            class="bi bi-plus-circle"></i> <strong>Agregar Productos</strong></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="actualizar_producto.php"><i class="bi bi-pencil-square"></i> <strong>Actualizar Productos</strong></a>
+                    <a class="nav-link" href="actualizar_producto.php"><i class="bi bi-pencil-square"></i>
+                        <strong>Actualizar Productos</strong></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="eliminar_producto.php"><i class="bi bi-trash"></i> <strong>Eliminar Productos</strong></a>
+                    <a class="nav-link" href="eliminar_producto.php"><i class="bi bi-trash"></i> <strong>Eliminar
+                            Productos</strong></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="ventas.php"><i class="bi bi-cart"></i> <strong>Realizar Ventas</strong></a>
+                    <a class="nav-link" href="ventas.php"><i class="bi bi-cart"></i> <strong>Realizar
+                            Ventas</strong></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="logout.php"><i class="bi bi-door-open"></i> <strong>Cerrar Sesión</strong></a>
+                    <a class="nav-link" href="logout.php"><i class="bi bi-door-open"></i> <strong>Cerrar
+                            Sesión</strong></a>
                 </li>
             </ul>
         </div>
@@ -215,11 +251,13 @@ $productos = cargarProductos($conn);
                 <div class="product-list" id="productos-agregados">
                     <?php foreach ($productos as $producto): ?>
                         <div class="product-card">
-                            <img src="<?= 'IMAGENESBD/' . $producto['imagen'] ?>" alt="<?= $producto['nombre'] ?>" class="product-image">
+                            <img src="<?= 'IMAGENESBD/' . $producto['imagen'] ?>" alt="<?= $producto['nombre'] ?>"
+                                class="product-image">
                             <div class="product-info">
                                 <h5 class="product-name"><strong><?= $producto['nombre'] ?></strong></h5>
                                 <p class="product-code"><strong>Código:</strong> <?= $producto['codigo'] ?></p>
-                                <p class="product-price"><strong>Precio:</strong> $<?= number_format($producto['precio'], 2) ?></p>
+                                <p class="product-price"><strong>Precio:</strong>
+                                    $<?= number_format($producto['precio'], 2) ?></p>
                             </div>
                         </div>
                     <?php endforeach; ?>
